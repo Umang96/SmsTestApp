@@ -85,7 +85,7 @@ class MainViewModel : ViewModel() {
     fun verifyUserIdentity(context: Context?) {
         context?.also { ctx ->
             if(PrefUtil.getStringPref(ctx, Constants.Prefs.PREF_UNIQUE_USER_ID).isNullOrEmpty()) {
-                val uid = if(BuildConfig.DEBUG) "8b4ec62e-a606-4abf-87f2-6a7d010a9203" else UUID.randomUUID().toString()
+                val uid = UUID.randomUUID().toString()
                 PrefUtil.storeStringPref(ctx, Constants.Prefs.PREF_UNIQUE_USER_ID, uid)
             }
         }
