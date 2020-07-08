@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
     private var adapter: SmsAdapter? = null
+    private var firstResume = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +31,31 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.verifyUserIdentity(this)
         prepareWidgetActions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (firstResume) {
+            firstResume = false
+        } else {
+            if (viewModel.checkSmsPermission(this)) {
+                loadDataFromApiIntoRecycler()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.btnRefresh) {
+            if (viewModel.checkSmsPermission(this)) {
+                loadDataFromApiIntoRecycler()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun prepareWidgetActions() {
@@ -45,15 +73,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadDataFromApiIntoRecycler() {
-        CommonUtil.printLog("debugpermission ready to go")
+        CommonUtil.printLog("debugpermission loading data from api")
         binding.btnGrantPermission.visibility = View.GONE
         binding.tvPermissionInfo.visibility = View.GONE
         binding.rvSms.visibility = View.VISIBLE
         binding.waitSpinner.visibility = View.VISIBLE
         viewModel.loadDataFromApi(this).observe(this, Observer {
             it?.also {
-                println("debugapi got response $it")
+                CommonUtil.printLog("debugapi got response $it")
                 if (it.list.isNotEmpty()) {
+                    adapter?.listOfSms?.clear()
                     adapter?.listOfSms?.addAll(it.list)
                     adapter?.notifyDataSetChanged()
                 } else {

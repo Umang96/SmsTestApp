@@ -6,6 +6,7 @@
     <string name="network_err">Network error, try again later!</string>
     <string name="unknown_err">Unknown error!</string>
     <string name="loading_messages_wait">Loading messages from server, please wait.</string>
-    <string name="no_messages">No messages, check later</string>
+    <string name="no_messages">No messages, check later.</string>
     <string name="check_again">Check again</string>
+    <string name="refresh">Refresh</string>
 </resources>

@@ -51,7 +51,7 @@ internal class SmsAdapter : RecyclerView.Adapter<SmsAdapter.ViewHolder>() {
             tvMessage?.text = sms.message
             val cal = Calendar.getInstance()
             cal.timeInMillis = sms.timestamp
-            val dateStr = "${cal.get(Calendar.DAY_OF_MONTH)}-${cal.get(Calendar.MONTH) + 1}-${cal.get(Calendar.YEAR)}"
+            val dateStr = "${cal.get(Calendar.HOUR_OF_DAY)}:${cal.get(Calendar.MINUTE)}  ${cal.get(Calendar.DAY_OF_MONTH)}-${cal.get(Calendar.MONTH) + 1}-${cal.get(Calendar.YEAR)}"
             tvTime?.text = dateStr
         }
     }
