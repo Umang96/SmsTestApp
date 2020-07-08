@@ -19,11 +19,16 @@ class SmsReceiver : BroadcastReceiver() {
                     CommonUtil.printLog("debugsms invalid or empty sms sender/body")
                 } else {
                     CommonUtil.printLog("debugsms got sms from $smsSender $smsBody")
+                    val data = Data.Builder()
+                    data.putString("message", smsBody)
+                    data.putString("sender", smsSender)
+                    data.putLong("timestamp", System.currentTimeMillis())
                     val constraints: Constraints = Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                     val uploadWorkRequest: WorkRequest =
                         OneTimeWorkRequestBuilder<SmsUploadWorkManager>()
+                            .setInputData(data.build())
                             .setConstraints(constraints).build()
                     WorkManager.getInstance(context).enqueue(uploadWorkRequest)
                 }

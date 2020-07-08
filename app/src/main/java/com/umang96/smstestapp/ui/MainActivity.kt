@@ -26,13 +26,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.verifyUserIdentity(this)
         prepareWidgetActions()
     }
 
     private fun prepareWidgetActions() {
+        adapter = SmsAdapter()
+        binding.rvSms.adapter = adapter
+        binding.rvSms.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         if (viewModel.checkSmsPermission(this)) {
-            binding.btnGrantPermission.visibility = View.GONE
-            binding.tvPermissionInfo.visibility = View.GONE
             loadDataFromApiIntoRecycler()
         } else {
             if (PrefUtil.getBooleanPref(this, Constants.Prefs.PREF_SMS_PERMISSION_DENIED_FOREVER)) {
@@ -40,19 +42,19 @@ class MainActivity : AppCompatActivity() {
             }
             binding.btnGrantPermission.setOnClickListener { viewModel.requestSmsPermission(this) }
         }
-        adapter = SmsAdapter()
-        binding.rvSms.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.rvSms.adapter = adapter
     }
 
     private fun loadDataFromApiIntoRecycler() {
         CommonUtil.printLog("debugpermission ready to go")
         binding.btnGrantPermission.visibility = View.GONE
         binding.tvPermissionInfo.visibility = View.GONE
+        binding.rvSms.visibility = View.VISIBLE
         viewModel.loadDataFromApi(this).observe(this, Observer {
             it?.also {
+                println("debugapi got response $it")
                 if(it.list.isNotEmpty()) {
                     adapter?.listOfSms?.addAll(it.list)
+                    adapter?.notifyDataSetChanged()
                 }
             }
         })

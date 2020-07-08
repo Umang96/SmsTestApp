@@ -24,6 +24,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
 
 class MainViewModel : ViewModel() {
 
@@ -79,6 +80,15 @@ class MainViewModel : ViewModel() {
                 })
         }
         return liveData
+    }
+
+    fun verifyUserIdentity(context: Context?) {
+        context?.also { ctx ->
+            if(PrefUtil.getStringPref(ctx, Constants.Prefs.PREF_UNIQUE_USER_ID).isNullOrEmpty()) {
+                val uid = UUID.randomUUID()
+                PrefUtil.storeStringPref(ctx, Constants.Prefs.PREF_UNIQUE_USER_ID, uid.toString())
+            }
+        }
     }
 
 }

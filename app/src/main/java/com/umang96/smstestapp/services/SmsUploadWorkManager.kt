@@ -7,18 +7,21 @@ import com.umang96.smstestapp.api.RetrofitProvider
 import com.umang96.smstestapp.api.SmsApi
 import com.umang96.smstestapp.data.Request
 import com.umang96.smstestapp.data.Response
+import com.umang96.smstestapp.data.Sms
 import com.umang96.smstestapp.util.Constants
 import com.umang96.smstestapp.util.PrefUtil
 import retrofit2.Call
 import retrofit2.Callback
 
-class SmsUploadWorkManager(var context: Context, var parameters: WorkerParameters) : Worker(context, parameters) {
+class SmsUploadWorkManager(private var context: Context, private var parameters: WorkerParameters) : Worker(context, parameters) {
 
     override fun doWork(): Result {
         RetrofitProvider.getClient().create(SmsApi::class.java)
             .putSms(Request(PrefUtil.getStringPref(context, Constants.Prefs.PREF_UNIQUE_USER_ID),
-                false, Pair(parameters.inputData.getString("sender"),
-                    parameters.inputData.getString("message"))))
+                false, Sms(parameters.inputData.getString("sender"),
+                    parameters.inputData.getString("message"),
+                    parameters.inputData.getLong("timestamp", -1L))
+            ))
             .enqueue(object : Callback<Response> {
 
                 override fun onResponse(

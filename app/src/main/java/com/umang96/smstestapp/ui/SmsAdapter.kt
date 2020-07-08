@@ -6,11 +6,14 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.umang96.smstestapp.R
+import com.umang96.smstestapp.data.Sms
 import com.umang96.smstestapp.databinding.ItemSmsBinding
+import java.util.*
+import kotlin.collections.ArrayList
 
 internal class SmsAdapter : RecyclerView.Adapter<SmsAdapter.ViewHolder>() {
 
-    val listOfSms = ArrayList<Pair<String?, String?>>()
+    val listOfSms = ArrayList<Sms>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -35,15 +38,21 @@ internal class SmsAdapter : RecyclerView.Adapter<SmsAdapter.ViewHolder>() {
 
         private var tvPhone: TextView? = null
         private var tvMessage: TextView? = null
+        private var tvTime: TextView? = null
 
         init {
             tvPhone = binding.tvFrom
             tvMessage = binding.tvMessage
+            tvTime = binding.tvTime
         }
 
-        fun bindView(sms: Pair<String?, String?>) {
-            tvPhone?.text = sms.first
-            tvMessage?.text = sms.second
+        fun bindView(sms: Sms) {
+            tvPhone?.text = sms.phone
+            tvMessage?.text = sms.message
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = sms.timestamp
+            val dateStr = "${cal.get(Calendar.DAY_OF_MONTH)}-${cal.get(Calendar.MONTH) + 1}-${cal.get(Calendar.YEAR)}"
+            tvTime?.text = dateStr
         }
     }
 
