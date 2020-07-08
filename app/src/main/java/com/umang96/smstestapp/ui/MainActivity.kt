@@ -49,20 +49,39 @@ class MainActivity : AppCompatActivity() {
         binding.btnGrantPermission.visibility = View.GONE
         binding.tvPermissionInfo.visibility = View.GONE
         binding.rvSms.visibility = View.VISIBLE
+        binding.waitSpinner.visibility = View.VISIBLE
         viewModel.loadDataFromApi(this).observe(this, Observer {
             it?.also {
                 println("debugapi got response $it")
-                if(it.list.isNotEmpty()) {
+                if (it.list.isNotEmpty()) {
                     adapter?.listOfSms?.addAll(it.list)
                     adapter?.notifyDataSetChanged()
+                } else {
+                    binding.rvSms.visibility = View.GONE
+                    binding.btnGrantPermission.visibility = View.VISIBLE
+                    binding.tvPermissionInfo.visibility = View.VISIBLE
+                    binding.btnGrantPermission.setOnClickListener { loadDataFromApiIntoRecycler() }
+                    binding.btnGrantPermission.text = getString(R.string.check_again)
+                    binding.tvPermissionInfo.text =
+                        when {
+                            it.error.orEmpty() == getString(R.string.network_err) -> it.error
+                            it.error.isNullOrEmpty() -> getString(
+                                R.string.no_messages
+                            )
+                            else -> it.error
+                        }
                 }
             }
+            binding.waitSpinner.visibility = View.GONE
         })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE && viewModel.checkSmsPermission(this)) {
+        if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE && viewModel.checkSmsPermission(
+                this
+            )
+        ) {
             loadDataFromApiIntoRecycler()
         }
     }

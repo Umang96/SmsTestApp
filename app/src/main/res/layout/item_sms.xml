@@ -6,11 +6,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
-        android:elevation="2dp"
         android:orientation="vertical">
 
         <TextView
@@ -18,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:text="+91 9123432232" />
 
@@ -26,17 +21,20 @@
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            tools:text="+91 9123432232" />
+            android:layout_marginStart="8dp"
+            tools:text="01:56    09-07-2020" />
 
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             tools:text="aksjndakjsdnkjasdnjk askjdnaskjdnaskjndjkadns kajdsnaksjdnakjsdn akjsdnaksjndkajndkjanskdjnakjsdnkajsnd" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGray" />
 
     </LinearLayout>
 

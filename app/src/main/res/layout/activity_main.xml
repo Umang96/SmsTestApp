@@ -46,12 +46,40 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/item_sms" />
+            tools:listitem="@layout/item_sms"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/waitSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dimBlack"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_spinner"
+                android:padding="8dp"
+                android:progressTint="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_overlay_txt"
+                android:padding="8dp"
+                android:text="@string/loading_messages_wait" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
