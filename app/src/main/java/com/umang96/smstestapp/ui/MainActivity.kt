@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.umang96.smstestapp.R
 import com.umang96.smstestapp.databinding.ActivityMainBinding
 import com.umang96.smstestapp.util.CommonUtil
@@ -18,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private var adapter: SmsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,25 +33,35 @@ class MainActivity : AppCompatActivity() {
         if (viewModel.checkSmsPermission(this)) {
             binding.btnGrantPermission.visibility = View.GONE
             binding.tvPermissionInfo.visibility = View.GONE
-            doSomething()
+            loadDataFromApiIntoRecycler()
         } else {
             if (PrefUtil.getBooleanPref(this, Constants.Prefs.PREF_SMS_PERMISSION_DENIED_FOREVER)) {
                 binding.tvPermissionInfo.text = getString(R.string.denied_forever_info)
             }
             binding.btnGrantPermission.setOnClickListener { viewModel.requestSmsPermission(this) }
         }
+        adapter = SmsAdapter()
+        binding.rvSms.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.rvSms.adapter = adapter
     }
 
-    private fun doSomething() {
+    private fun loadDataFromApiIntoRecycler() {
         CommonUtil.printLog("debugpermission ready to go")
         binding.btnGrantPermission.visibility = View.GONE
         binding.tvPermissionInfo.visibility = View.GONE
+        viewModel.loadDataFromApi(this).observe(this, Observer {
+            it?.also {
+                if(it.list.isNotEmpty()) {
+                    adapter?.listOfSms?.addAll(it.list)
+                }
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE && viewModel.checkSmsPermission(this)) {
-            doSomething()
+            loadDataFromApiIntoRecycler()
         }
     }
 
@@ -61,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 CommonUtil.printLog("debugpermission user has granted permission")
-                doSomething()
+                loadDataFromApiIntoRecycler()
             } else {
                 CommonUtil.printLog("debugpermission user has denied permission")
                 if (!shouldShowRequestPermissionRationale(Manifest.permission.RECEIVE_SMS)) {

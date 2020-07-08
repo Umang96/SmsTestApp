@@ -3,4 +3,6 @@
     <string name="sms_permission_reason">Please grant SMS permission to proceed. It is required for using the app. This permission will enable the app to read incoming SMS on your device, we do not collect non-financial SMS.</string>
     <string name="grant_sms_permission">Grant SMS Permission</string>
     <string name="denied_forever_info">You have chosen the don\'t ask again option, please grant the SMS permission from settings if you want to use the app.</string>
+    <string name="network_err">Network error!</string>
+    <string name="unknown_err">Unknown error!</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.umang96.smstestapp.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -8,10 +9,21 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.umang96.smstestapp.BuildConfig
+import com.umang96.smstestapp.R
+import com.umang96.smstestapp.api.RetrofitProvider
+import com.umang96.smstestapp.api.SmsApi
+import com.umang96.smstestapp.data.Request
+import com.umang96.smstestapp.data.Response
 import com.umang96.smstestapp.util.Constants
 import com.umang96.smstestapp.util.PrefUtil
+import retrofit2.Call
+import retrofit2.Callback
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class MainViewModel : ViewModel() {
 
@@ -35,6 +47,38 @@ class MainViewModel : ViewModel() {
                 Constants.SMS_PERMISSION_REQUEST_CODE
             )
         }
+    }
+
+    fun loadDataFromApi(context: Context?): LiveData<Response?> {
+        val liveData = MutableLiveData<Response?>()
+        context?.also { ctx ->
+            RetrofitProvider.getClient().create(SmsApi::class.java)
+                .getSms(
+                    Request(
+                        PrefUtil.getStringPref(ctx, Constants.Prefs.PREF_UNIQUE_USER_ID),
+                        true
+                    )
+                )
+                .enqueue(object : Callback<Response> {
+
+                    override fun onResponse(
+                        call: Call<Response>,
+                        response: retrofit2.Response<Response>
+                    ) {
+                        liveData.postValue(response.body())
+                    }
+
+                    override fun onFailure(call: Call<Response>, t: Throwable) {
+                        if (t is SocketTimeoutException || t is UnknownHostException) {
+                            liveData.postValue(Response(error = ctx.getString(R.string.network_err)))
+                        } else {
+                            liveData.postValue(Response(error = ctx.getString(R.string.unknown_err)))
+                        }
+                    }
+
+                })
+        }
+        return liveData
     }
 
 }
