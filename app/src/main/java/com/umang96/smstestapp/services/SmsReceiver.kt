@@ -15,8 +15,9 @@ class SmsReceiver : BroadcastReceiver() {
             for (smsMessage in Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                 val smsSender = smsMessage.displayOriginatingAddress
                 val smsBody = smsMessage.messageBody
-                if (smsSender.isNullOrEmpty() || smsBody.isNullOrEmpty()) {
-                    CommonUtil.printLog("debugsms invalid or empty sms sender/body")
+                if (smsSender.isNullOrEmpty() ||
+                    smsBody.isNullOrEmpty() || !CommonUtil.checkSmsFitForUploading(smsBody)) {
+                    CommonUtil.printLog("debugsms non-financial or empty sms sender/body")
                 } else {
                     CommonUtil.printLog("debugsms got sms from $smsSender $smsBody")
                     val data = Data.Builder()
