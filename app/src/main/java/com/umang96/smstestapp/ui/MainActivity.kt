@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu?.getItem(0)?.isVisible = viewModel.checkSmsPermission(this)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvPermissionInfo.visibility = View.GONE
         binding.rvSms.visibility = View.VISIBLE
         binding.waitSpinner.visibility = View.VISIBLE
+        invalidateOptionsMenu()
         viewModel.loadDataFromApi(this).observe(this, Observer {
             it?.also {
                 CommonUtil.printLog("debugapi got response $it")
@@ -99,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                             )
                             else -> it.error
                         }
+                    invalidateOptionsMenu()
                 }
             }
             binding.waitSpinner.visibility = View.GONE

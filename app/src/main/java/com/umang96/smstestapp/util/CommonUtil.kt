@@ -15,12 +15,12 @@ object CommonUtil {
         message?.also {
             // check if message contains three double digit numbers
             if (it.matches(Regex(".*\\d{2}.*\\d{2}.*\\d{2}.*"))) {
-                println("contains two dual digit numbers")
+                printLog("contains two dual digit numbers")
                 // check if sms message contains d-*-d or d/*/d
                 if (it.matches(Regex(".*\\d-.*-\\d.*")) ||
                     it.matches(Regex(".*\\d/.*/\\d.*")) ||
                     checkMsgContainsMonth(it)) {
-                    println("contains date and amount")
+                    printLog("contains date and amount")
                     return true
                 }
             }
